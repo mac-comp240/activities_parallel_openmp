@@ -7,9 +7,7 @@
  *
  * Usage: ./parallelLoopEqualChunks [numThreads]
  *
- * Exercise
- * - Compile and run, comparing output to source code
- * - try with different numbers of threads, e.g.: 2, 3, 4, 6, 8
+ * TODO; Compile and run this code with different numbers of threads: 2, 3, 4, 6, 8, etc.
  */
 
 #include <stdio.h>    // printf()

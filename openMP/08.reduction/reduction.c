@@ -5,13 +5,7 @@
  *
  * Usage: ./reduction 
  *
- * Exercise:
- * - Compile and run.  Note that correct output is produced.
- * - Uncomment #pragma in function parallelSum(), 
- *    but leave its reduction clause commented out
- * - Recompile and rerun.  Note that correct output is NOT produced.
- * - Uncomment 'reduction(+:sum)' clause of #pragma in parallelSum()
- * - Recompile and rerun.  Note that correct output is produced again.
+ * TODO: Experiment with the tools to manage shared data with the reduction pattern
  */
 
 #include <stdio.h>   // printf()

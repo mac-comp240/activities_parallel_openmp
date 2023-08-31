@@ -6,10 +6,7 @@
  *
  * Usage: ./barrier [numThreads]
  * 
- * Exercise:
- * - Compile & run several times, noting interleaving of outputs.
- * - Uncomment the barrier directive, recompile, rerun,
- *    and note the change in the outputs.
+ * TODO: Run this and observe the effect of the barrier pragma
  */
 
 #include <stdio.h>

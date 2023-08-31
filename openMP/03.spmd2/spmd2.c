@@ -7,12 +7,9 @@
  *
  * Usage: ./spmd2 [numThreads]
  *
- * Exercise:
- * - Compile & run with no commandline args 
- * - Rerun with different commandline args,
- *    until you see a problem with thread ids
- * - Fix the race condition
- *    (if necessary, compare to 02.spmd)
+ * TODO: Compile and run this program multiple times. Look for a "race condition",
+ * which happens when different threads access shared data in a way that causes 
+ * anomalous outputs. Fix the issue (look back at patternlet 2)
  */
 
 #include <stdio.h>

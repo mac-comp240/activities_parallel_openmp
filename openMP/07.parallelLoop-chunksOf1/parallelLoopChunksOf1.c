@@ -7,13 +7,9 @@
  *
  * Usage: ./parallelLoopChunksOf1 [numThreads]
  *
- * Exercise:
- * 1. Compile and run, comparing output to source code,
- *    and to the output of the 'equal chunks' version.
- * 2. Uncomment the "commented out" code below,
- *    and verify that both loops produce the same output.
- *    The first loop is simpler but more restrictive;
- *    the second loop is more complex but less restrictive.
+ * TODO: Compile and run the two parallel code segments and compare the results
+ * TODO: Experiment with changing static to dynamic and changing the number of iterations
+ * in the schedule
  */
 
 #include <stdio.h>

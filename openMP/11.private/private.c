@@ -5,10 +5,9 @@
  *
  * Usage: ./private 
  *
- * Exercise: 
- * - Run, noting that the sequential program produces correct results
- * - Uncomment line A, recompile/run and compare
- * - Recomment line A, uncomment line B, recompile/run and compare
+ * TODO: Experiment with how to parallelize properly so that array indices are
+ * private to each thread rather than shared (where threads will interfere with
+ * each other)
  */
 
 #include <stdio.h>

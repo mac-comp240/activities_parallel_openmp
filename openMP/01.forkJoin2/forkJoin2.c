@@ -7,10 +7,8 @@
  *
  * Usage: ./forkJoin2
  *
- * Exercise:
- * - Compile & run, compare results to source.
- * - Predict how many threads will be used in 'Part IV'?
- * - Uncomment 'Part IV', recompile, rerun.
+ * TODO: Predict the number of threads for each section, and experiment
+ * TODO: to check your predictions
  */
 
 #include <stdio.h>    // printf()
