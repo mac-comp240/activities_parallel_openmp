@@ -1,4 +1,4 @@
-# Activity 22: OpenMP Basics (Patternlets)
+# Activity 23: OpenMP Basics (Patternlets)
 ## Put your name(s) here
 
 In this activity, you will experiment with OpenMP pragmas and how they implement parallelism using multithreaded computations. Discuss each question with your table and write your answers in this README file.
