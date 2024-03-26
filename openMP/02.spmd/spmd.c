@@ -7,6 +7,8 @@
  * Usage: ./spmd
  *
  * TODO: Experiment with shared and unshared data in the code below
+ *     * Add shared data by declaring a new int before the pragma block
+ *     * Print the shared data within each thread - what happens?
  */
 
 #include <stdio.h>
@@ -14,18 +16,12 @@
 
 int main(int argc, char** argv) {
     printf("\n");
-    int shared_var = 0;
 
     // #pragma omp parallel // num_threads(4) /* Uncomment this line in stages to see the effects! */
     {
         int id = omp_get_thread_num();
         int numThreads = omp_get_num_threads();
-        shared_var = id;
-        printf("Hello from thread %d of %d with shared value %d\n", id, numThreads, shared_var);
-        printf("Shared value: %d\n", shared_var);
-        if (shared_var != id) {
-            printf("WRONG!\n");
-        }
+        printf("Hello from thread %d of %d\n", id, numThreads);
     }
 
     printf("\n");
