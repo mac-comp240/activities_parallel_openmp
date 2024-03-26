@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     printf("\n");
     int shared_var = 0;
 
-    #pragma omp parallel // num_threads(4)
+    // #pragma omp parallel // num_threads(4) /* Uncomment this line in stages to see the effects! */
     {
         int id = omp_get_thread_num();
         int numThreads = omp_get_num_threads();
