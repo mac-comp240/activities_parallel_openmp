@@ -10,6 +10,7 @@
  // TODO: Experiment with this code with and without the pragma
  // TODO: Modify this code to see thread numbers and to change the
  // number of threads allocated
+ // Hint: omp_get_thread_num() may be helpful
 
 #include <stdio.h>     // printf()
 #include <omp.h>       // OpenMP
@@ -19,7 +20,7 @@ int main(int argc, char** argv) {
     printf("\nBefore...\n");
 
     // #pragma omp parallel 
-    printf("\nDuring...%d\n", omp_get_thread_num());
+    printf("\nDuring...%d\n");
 
     printf("\n\nAfter...\n\n");
 
