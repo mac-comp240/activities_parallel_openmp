@@ -101,43 +101,67 @@ fork-join pattern, but focuses on threads that all run the same program
     block: these variables are private to an individual thread, so their
     values don't interfere with each other
 * Compile and run the code, with and without the pragma enabled
+* To simplify the output, use the `num_threads` option on the pragma line
+to reduce the number of threads to 4 or 8
 * Modify the code to add a shared variable:
-    - Declare an `int` variable `shared_var` at the start of `main`. Because 
+    - Declare an `int` variable `sharedVar` at the start of `main`. Because 
     this variable is declared in the parent thread, it will automatically be 
     shared by all the threads
-    - Inside the parallel block, add a line to define `shared_var` to be `id`
-    - Add to the print statement to print out the value of `shared_var`
-    - Run the code to see if the values of `id` and `shared_var` are the same
-    - Try adding a separate print statement after the first one to print `shared_var`
-- When you run the program: what happens? Discuss with your teammates what you see, and
-report your observations and why you think it happened here.
+    - Inside the parallel block, add a line to define `sharedVar` to be `id`
+    - Add to the print statement to print out the value of `sharedVar`
+    - Run the code to see if the values of `id` and `sharedVar` are the same
+    - Try adding an additional print statement after the first one to print out
+    `sharedVar` again
+* When you run the program: what happens? Discuss with your teammates what you 
+see, and report your observations and why you think it happened here.
 
-### Patternlet 3
+Variables that are declared before and outside of a parallel code block are by default shared by all threads. Variables declared inside the parallel code block
+are by default private to each thread (each thread has its own copy). 
 
-This patternlet just illustrates how to use command-line arguments to a C program
-to give user-defined inputs to the program. In this case the user can specify the
-number of threads in the command line.
+We can also declare variables before the code block, and then use the pragma
+to control what is shared and what is private. The pragma can have two optional
+modifiers: `private(...)`, which lists the variables that should be private to
+each thread, and `shared(...`), which lists the variables that are shared across
 
-- Examine the code, and make sure you understand how the command-line arguments work
-- Compile and run the program, running it multiple times with multiple values for the number of threads
-- Look for a time when the thread numbers appear wrong: this is a race condition!
-- Why does this happen (discuss with teammates)? 
-- Fix the problem!
+* Modify this program to declare `id`, `numThreads`, and `sharedVar` at the 
+start of `main`.
+* Run the code without using the pragma modifiers at all. You should see even worse
+race conditions than before!
+* Next, add modifiers to the pragma line to set `id` and `numThreads` to be private
+and `sharedVar` to be shared.
+* What happens?
 
-### Patternlet 4
 
-This patternlet shows how to implement a "barrier," a point in the code that all
-threads must reach before any move on to the next statement. Each thread reaches that
-point and then blocks if there are threads that have not reached it yet. Once all threads
-reach the barrier point, then they all can move on to the next step.
+### Task 3: SPMD with for loops and shared array
 
-- Examine the code, and run it several times without the barrier pragma. Watch for
-"before" and "after" print statements to interleave with each other
-- Uncomment the barrier pragma, and run the code again
-- Observe what happens
+A common SPMD pattern is to split up the iterations of a for loop across different
+threads, or to split up sections of an array so that different threads perform 
+the same task on different parts of the array.
 
-### Patternlet 5
+* Examine the `arraySPMD.c` program. This is similar to a task from an earlier
+homework assignment. It creates a large array of doubles, and then loops over the
+array and fills each slot with the square of its index.
+* Try running this program as is, in its serial form
+* Add in an OpenMP pragma just before the for loop: `#pragma omp parallel for`
+* Run the program again: with the default array size, it runs fast enough serially
+that we can't really tell if there is any improvement running in parallel.
 
+OpenMP provides a function we can use to time how long the parallel segment takes:
+`omp_get_wtime()`. It returns a `double` indicating the current time. We can record the
+time just before the parallel code section, and then record the time again just after
+it ends, and look at the difference between the two as the elapsed time.
+
+* Assign a variable to hold `omp_get_wtime()` just before the pragma (and after the `printf` statement).
+
+* Assign a different variable to hold `omp_get_wtime()` just after the for loop ends (and before the last `printf` statement).
+
+* Compute the difference, and add it to the final print statement.
+* Run the program without the OpenMP pragma (serially) and look at the time taken,
+then run it again using the parallel for. Is there a difference? What if you increase
+the size of the array? Add a couple more zeros to the array size: what happens.
+Record your discussion in this README file.
+
+### Task 3: 
 **Warning again:** The CS in Parallel text refers to the pattern here as "Master-Worker,"
 which was the typical terms used until recently. We are now moving away from the term
 master, so this pattern will be called here "Main-Worker", as in "main thread" and 
