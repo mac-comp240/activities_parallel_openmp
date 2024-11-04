@@ -1,14 +1,13 @@
-# Activity 22: OpenMP Basics (Patternlets)
+# Activity 23: OpenMP Basics
 ## Put your name(s) here
 
 In this activity, you will experiment with OpenMP pragmas and how they implement parallelism using multithreaded computations. Discuss each question with your table and write your answers in this README file.
 
 You will:
-- Run, observe, modify, and experiment with 5 patternlets (small programming examples that illustrate OpenMP) about shared memory parallel structures
-- Run, observe, modify, and experiment with 3 patternlets about "data decomposition," breaking an array of data into parts and operating in parallel on each part
-- Run, observe, modify, and experiment with 1 patternlet about managing shared and private variables 
-
-**Open the [Shared Memory Parallel Patternlets in OpenMP](http://selkie-macalester.org/csinparallel/modules/Patternlets/build/html/SharedMemory/OpenMP_Patternlets.html) website to start!**
+- Run, observe, modify, and experiment with small programs that illustrate
+shared memory parallel structures
+- Run, observe, modify, and experiment with "data decomposition," breaking an array of data into parts and operating in parallel on each part
+- Run, observe, modify, and experiment with managing shared and private variables 
 
 OpenMP is built into many compilers, including gcc. It has both library
 functions and very special compiler directives called **pragmas**. These are
@@ -17,24 +16,22 @@ transformed into code that executes concurrently, or in parallel.
 
 ### Simple examples as patterns
 
-All programs we write as experienced software developers have certain kinds of
-**patterns** that we follow and adapt over and over again. These patterns are
-ways of accomplishing a task that experienced programmers know to be effective.
-
-Professor Shoop has written some small examples of several of these patterns for
-parallel programming using openMP. Because they are small and designed to
-demononstrate one or two basic concepts, we call them *patternlets*.
+These examples are drawn from work by Macalester professor Libby Shoop and her collaborators. 
+They build on examples from the Parallel Computing for Beginners online, interactive
+textbook. But here we will experiment on our own server.
 
 ## Provided Code
 
-The patternlet examples are in a folder called `openmp` that is a part of this repository (you don't have to download them for yourself). We will look at just the subfolders listed below:
-- `00.forkJoin`
-    - a folder for Patternlet 0, containing the `forkJoin.c` program and its `Makefile`
-- `01.forkJoin2`
-    - a folder for Patternlet 1, containing the `forkJoin2.c` program and its `Makefile`
-- `02.spmd`
-    - a folder for Patternlet 2, containing the `spmd.c` program (single-program multiple-data) 
-    and its `Makefile`
+- `Makefile`
+    - a makefile to compile all these programs
+- `forkJoin.c`
+    - a starter program showingn the fork-join pattern, similar to one from our reading
+- `spmd.c`
+    - a starter program illustrating the SPMD (single-program multiple-data) pattern, also
+    similar to one from our reading
+
+
+
 - `03.spmd2`
     - a folder for Patternlet 3, containing the `spmd2.c` program and its `Makefile`
 - `04.barrier`
@@ -56,62 +53,58 @@ The patternlet examples are in a folder called `openmp` that is a part of this r
 
 
 
-## Patternlet Activities
+## Tasks
 
-For this activity, you should read not only the instructions below, but
-also the instruction on the [OpenMP Patternlets website](http://selkie-macalester.org/csinparallel/modules/Patternlets/build/html/SharedMemory/OpenMP_Patternlets.html).
-
-You should complete patternlets 00-08 and 11.
-
-### Patternlet 0
+### Task 1: Exploring the fork-join pattern
 
 The fork-join pattern uses an OpenMP pragma to set up a set of threads that all
-perform the same line of code: the one that follows the pragma. 
+perform the same block of code. The threads may or may not operate on shared data, here
+we will avoid shared data.
 
-- Examine the `forkJoin.c` program, then compile and run it
-- Notice that only one copy of "During" is printed
-- Uncomment the `#pragma omp parallel` line,
-which tells OpenMP to create a default number of threads, and ask each one to run the line that follows
-- How many threads are created by default? (Record your answer here in this README)
-- Modify the `forkJoin.c` program to add to the `printf` line that is performed in parallel. Add a call to `omp_get_thread_num`, which will return an `int`, the unique number assigned to the current thread. Print that number.
-    - Hint: you must incorporate the call into the `printf` statement, or you will just get the original program's thread number
-- Compile and run the program, and use it to check
-that your thread count was correct
-- Run the program multiple times: what happens to the order in which threads print? 
-- Modify the program by adding to the pragma line `num_threads(5)`. This will allocate the given number of threads, rather than the default
-- Compile and run the program and note how it differs
+* Examine the `forkJoin.c` program, then compile and run it
+    - Notice that the code includes curly braces around the middle `printf`: this
+    creates a block of code so that when we uncomment the OpenMP pragma we can
+    include multiple lines of code if we want
+* Notice that only one copy of "During" is printed
+* Uncomment the `#pragma omp parallel` line, which tells OpenMP to create a 
+default number of threads, and ask each one to run the line that follows
+* Count how many threads are created by default (Record your answer here in this README)
+* Modify the `forkJoin.c` program to add to the `printf` line that is performed 
+in parallel. 
+    - Add a call to `omp_get_thread_num`, which will return an `int`, 
+    the unique number assigned to the current thread. Print that number.
+    - Either add the call to the `printf` or assign a variable to hold it ** inside
+    the pragma's code block**
+* Compile and run the program, and use it to check that your thread count was correct
+* Run the program multiple times: what happens to the order in which threads print? 
+* Modify the program by adding to the pragma line `num_threads(5)`. This will 
+allocate the given number of threads, rather than the default
+* Compile and run the program and note how it differs
+* Change the `printf` after the parallel section to say "After first parallel block..."
+* After that, call `omp_set_num_threads` and set the number of threads to 8
+* Copy the pragma and its code block and paste the copy below the call to `omp_set_num_threads`
+* Add a final print statement to print "The end..."
+* Compile and run the program. Notice how the serial and parallel sections of 
+the code alternate with each other
 
-### Patternlet 1
 
-The second patternlet illustrates a sequence of parallel code sections, as well as
-multiple ways to set the number of threads allocated. One way is to set the number
-of threads directly in the parallel pragma; another is to call the `omp_set_num_threads` 
-function, which sets them from that point onward.
+### Task 2: Exploring the SPMD pattern
 
-- Read through the `forkJoin2.c` program
-- Discuss with your teammates how many threads each pragma should create; record
-your predictions here in this README
-- Compile and run the program and check your results
-- Predict the number of threads for the commented-out section, and uncomment it
-to check the results
-- Try changing the number of threads specified before part 2, and before part 3. Make
-sure you understand what each pragma and function is doing
+SPMD stands for "single-program multiple-data." This pattern builds on the 
+fork-join pattern, but focuses on threads that all run the same program 
+("single-program"), do the same operations, but each operates on its own data 
+("multiple data").
 
-### Patternlet 2
-
-This patternlet focuses on the single-program, multiple-data pattern. Each parallel
-thread is running the same program, but each has some variables that belong to it alone
-(the "multiple data"). It also demonstrates how to parallelize multiple lines of
-code: by making a block of code with curly-braces.
-
-- Examine the code in `spmd.c`. 
+* Examine the code in `spmd.c`. 
     - Look closely at the block of code after the parallel pragma
-    - Notice that two variables are declared local to the parallel block: these variables
-    are private to an individual thread, so their values don't interfere with each other
-- Compile and run the code, with and without the pragma enabled
-- Modify the code to add a shared variable:
-    - Declare an `int` variable `shared_var` at the start of `main`; because this variable
-    is declared in the parent thread (and isn't dynamically allocated in the heap), it will automatically be shared by all the threads
+    - Notice that two variables are declared local to the parallel
+    block: these variables are private to an individual thread, so their
+    values don't interfere with each other
+* Compile and run the code, with and without the pragma enabled
+* Modify the code to add a shared variable:
+    - Declare an `int` variable `shared_var` at the start of `main`. Because 
+    this variable is declared in the parent thread, it will automatically be 
+    shared by all the threads
     - Inside the parallel block, add a line to define `shared_var` to be `id`
     - Add to the print statement to print out the value of `shared_var`
     - Run the code to see if the values of `id` and `shared_var` are the same
