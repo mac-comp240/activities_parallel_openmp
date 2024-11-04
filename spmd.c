@@ -7,6 +7,8 @@
  * Usage: ./spmd
  *
  * TODO: Experiment with shared and unshared data in the code below
+ *     * Add shared data by declaring a new int before the pragma block
+ *     * Print the shared data within each thread - what happens?
  */
 
 #include <stdio.h>
