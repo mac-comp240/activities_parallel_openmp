@@ -20,17 +20,13 @@ int main() {
 
     printf("Filling array...\n");
 
-    double t1 = omp_get_wtime();
-
-    #pragma omp parallel for
     for (long i = 0; i < N; i++) {
         A[i] = (double)i * (double)i;
     }
 
-    double t2 = omp_get_wtime();
-    double elapsed = t2 - t1;
+    printf("Done filling array!\n");
 
-    printf("Done filling array! Time taken: %f\n", elapsed);
+    free(A);
     return 0;
 }
 
