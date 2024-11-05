@@ -22,35 +22,24 @@ textbook. But here we will experiment on our own server.
 
 ## Provided Code
 
-- `Makefile`
+* `Makefile`
     - a makefile to compile all these programs
-- `forkJoin.c`
+* `forkJoin.c`
     - a starter program showingn the fork-join pattern, similar to one from our reading
-- `spmd.c`
+* `spmd.c`
     - a starter program illustrating the SPMD (single-program multiple-data) pattern, also
     similar to one from our reading
-
-
-
-- `03.spmd2`
-    - a folder for Patternlet 3, containing the `spmd2.c` program and its `Makefile`
-- `04.barrier`
-    - a folder for Patternlet 4, containing the `barrier.c` program and its `Makefile`
-- `05.mainWorker`
-    - a folder for Patternlet 5, containing the `mainWorker.c` program and its `Makefile`
-    - **Ickiness warning!** This patternlet was created some time ago when accepted
-    terminology for this pattern used the term "master" for the main thread. We have
-    changed the terminology in this activity, but you will see it when you read the patternlet
-- `06.parallelLoop-equalChunks`
-    - a folder for Patternlet 6, containing the `parallelLoopEqualChunks.c` program and its `Makefile`
-- `07.parallelLoop-chunksOf1`
-    - a folder for Patternlet 7, containing the `parallelLoopChunksOf1.c` program and its `Makefile`
-- `08.reduction`
-    - a folder for Patternlet 8, containing the `reduction.c` program and its `Makefile`
-- `11.private`
-    - a folder for Patternlet 11, containing the `private.c` program and its `Makefile`
-
-
+* `arraySPMD.c`
+    - a starter program illustrating the SPMD pattern on an array of data
+* `private.c`
+    - a starter program about private versus shared data
+* `iterPatterns.c`
+    - a starter program to experiment with different patterns for dividing up iterations
+    of a loop across threads
+* `leaderWorker.c`
+    - a starter program to illustrate the leader-worker pattern
+* `reduction.c`
+    - a starter program to illustrate how to use reduction to combine results from different threads 
 
 
 ## Tasks
@@ -73,8 +62,8 @@ default number of threads, and ask each one to run the line that follows
 in parallel. 
     - Add a call to `omp_get_thread_num`, which will return an `int`, 
     the unique number assigned to the current thread. Print that number.
-    - Either add the call to the `printf` or assign a variable to hold it ** inside
-    the pragma's code block**
+    - Either add the call to the `printf` or assign a variable to hold it 
+    **inside the pragma's code block**
 * Compile and run the program, and use it to check that your thread count was correct
 * Run the program multiple times: what happens to the order in which threads print? 
 * Modify the program by adding to the pragma line `num_threads(5)`. This will 
@@ -115,13 +104,14 @@ to reduce the number of threads to 4 or 8
 * When you run the program: what happens? Discuss with your teammates what you 
 see, and report your observations and why you think it happened here.
 
-Variables that are declared before and outside of a parallel code block are by default shared by all threads. Variables declared inside the parallel code block
+Variables that are declared before and outside of a parallel code block are by 
+default shared by all threads. Variables declared inside the parallel code block
 are by default private to each thread (each thread has its own copy). 
 
 We can also declare variables before the code block, and then use the pragma
 to control what is shared and what is private. The pragma can have two optional
 modifiers: `private(...)`, which lists the variables that should be private to
-each thread, and `shared(...`), which lists the variables that are shared across
+each thread, and `shared(...`), which lists the variables that are shared across all threads.
 
 * Modify this program to declare `id`, `numThreads`, and `sharedVar` at the 
 start of `main`.
@@ -130,6 +120,25 @@ race conditions than before!
 * Next, add modifiers to the pragma line to set `id` and `numThreads` to be private
 and `sharedVar` to be shared.
 * What happens?
+
+Lastly, let's make two final changes: change `sharedVar` so that it computes 
+something useful, and fix the race condition so that it works correctly.
+
+* Change `sharedVar` so that it is initialized to zero before the parallel block.
+Instead of every thread setting it to its id, add an `if` statement inside the
+parallel block that asks if the current thread's id number is even. If it is, then
+it should add one to `sharedVar`.
+
+If you run the code, it will still exhibit the issues caused by the race condition:
+uncontrolled access to a shared variable leads to bad things. What we really want
+is to require that only one thread adds to the shared variable at any given time.
+
+OpenMP provides a pragma, `#pragma omp critical` that marks a code block that
+is a "critical section" that must be limited to one thread at a time.
+
+* Add this pragma around the line that increments `sharedVar`, and run the program
+again. Now it should accurately report how many even-numbered thread ids there are.
+(Try different numbers of threads to test this.)
 
 
 ### Task 3: SPMD with for loops and shared array
@@ -161,75 +170,86 @@ then run it again using the parallel for. Is there a difference? What if you inc
 the size of the array? Add a couple more zeros to the array size: what happens.
 Record your discussion in this README file.
 
-### Task 3: 
-**Warning again:** The CS in Parallel text refers to the pattern here as "Master-Worker,"
-which was the typical terms used until recently. We are now moving away from the term
-master, so this pattern will be called here "Main-Worker", as in "main thread" and 
-"worker threads". 
+To test your understanding of the role of shared versus private data, examine
+the `private.c` program. This declares a two-dimensional array, and then initializes
+every entry in the array to be 1. It then tests to see if the initialization worked
+correctly.
 
-- Examine the code and predict what will print if you run it without the parallel pragma activated
-- Run it to check the results
-- Then uncomment the pragma and run it again
+* Run the `private.c` program as it is initially, with no pragmas in it. Confirm that it does
+work correctly.
+* We want to parallelize the first set of `for` loops. Add a `#pragma omp parallel for` before the first outer loop.
+* What happens when you run the program again? Why?
 
-### Patternlet 6
+* Fix the problem by declaring the necessary variables as private using the appropriate pragma modifier.
 
-This patternlet introduces the pragma for parallelizing iterations of a for loop. In this case,
-each thread is assigned one "chunk" of iterations of the for loop, and performs them sequentially.
 
-Data decomposition refers to the process of deciding, as a programmer, how to break up the
-data across different threads to most effectively and efficiently solve the problem at hand.
+### Task 3: Parallel loop variations
 
-The `parallelLoopEqualChunks.c` program uses the "default" data decomposition.
+Here we will look at ways to control how iterations of a loop are broken up and
+allocated to threads.
 
-- Read through the program, then compile and run it
-- What is the pattern for the default behavior: which loop iterations are assigned to which threads?
-Record your observations here.
-- The loop repeats 16 times. Try various numbers of threads, including some that divide 
-16 evenly and some that do not.
-- Experiment, running the code multiple times. When the iterations don't divide evenly, what
-is the default decomposition?
+* Examine the `iterPatterns.c` code, which prints out the thread ID and the
+loop variable for each iteration of the loop. Test this with different numbers
+of threads to understand how iterations of the loop are assigned to threads.
 
-### Patternlet 7
+* What is the pattern for the default behavior: which loop iterations are assigned to which threads? Record your observations here.
+* The loop repeats 16 times. Try various numbers of threads, including some that divide 16 evenly and some that do not.
+* When the iterations don't divide evenly, what is the default decomposition?
 
-This patternlet shows a different way to parallelize the iterations of a loop. 
-It assigns sequential iterations of the loop to different threads, then repeats
-the process.
+Next we will modify this code to assign chunks of iterations differently. Instead
+of splitting up the iterations into equal-sized chunks, we can assign shorter
+sequences of iterations to different threads.
 
-- Read through the code and note what is different here
-- Run the code and observe the behavior: record your observations here
-- Comment out lines 31 through 36, and uncomment lines 38 through 50
-- Verify that the results are the same
-- Restore the code to its original form, and change the word `static` to `dynamic`
-- Record what happens
-- Change the 1 to a 2 or a 4 and record how that changes the behavior of the code
+* Add the modifier `schedule(static, 1)` to the existing pragma
+* Experiment with the program to see the effect. How are iterations
+mapped onto threads here? Record your observations here.
+* Try changing 1 to 2 in the schedule modifier: what is that effect?
 
-### Patternlet 8
+* Finally, change the word `static` to `dynamic`, and observe the results.
 
-This patternlet shows how to combine the results of parallel iteration safely. The
-threads need to communicate to access the shared `sum` variable without interfering
-with each other. This is called a "reduction" because we are reducing a collection of
-values to a single aggregate value.
+Dynamic scheduling has more overhead, as chunks are assigned to threads in a 
+greedy manner: whenever a thread is ready for another chunk, it is given it.
 
-The program initializes the array to random values, and then computes the sum of the
-values sequentially. It then parallelizes the calculation of the sum.
+* Experiment as we did with static scheduling. Record your observations here.
 
-- Compile and run the program; note that correct output is produced
-- Uncomment the pragma in function `parallelSum`, but leave its reduction clause commented out
-- Recompile and rerun: now an incorrect sum is reported!
-- Uncomment the `reduction(+:sum)` clause of the pragma
-- Recompile and rerun it: The correct output is produced again
+### Task 4: Leader-worker pattern
 
-### Patternlet 11
+* Examine the `leaderWorker.c` program. This shows how a single program can produce different
+behavior from different threads. 
+* Run the starter program, which doesn't have any parallel blocks
+    - Notice that the serial thread is numbered 0, which we are using for the leader
+* Add a pragma to declare a parallel block
+    - Add curly braces to enclose the body of `main` except the `return` at the end.
+    - You might want to set the number of threads to something smaller to make it easier
+* Run the program again, and see what the threads do!
 
-This patternlet shows how to work with an array of data, and how to ensure that 
-variables that can't be shared across threads are made private to each thread.
 
-- Examine the program, and run it with all pragmas commented out; verify the correct result
-- Experiment with uncommenting the A pragma: What do you observe? Record your observations here
-- Experiment with uncommenting the B pragma: What do you observe?
-- What happens if you only declare one of the two variables to be private?
-- What happens if you enclose the for loops in a block, and declare the `i` and `j` variables
-inside the block that is parallelized?
+### Task 5: Reduction pattern
+
+* Read through all of the `reduction.c` program, carefully. This builds an array of 
+random values, and then adds the values serially and in parallel. 
+* Run the original version of the program. Notice that we have the same
+kind of 
+race condition here with the shared variable, `sum`, as we had with
+`sharedVar` in the earlier example.
+* Try the same fix that we used before: marking the line that adds to `sum` as critical
+* This fixed the race condition, but slows down the performance as the threads have
+to line up to access `sum`
+* Add `omp_get_wtime` calls before, between, and after the calls to `sequentialSum` and `parallelSum`, and use them to compute the elapsed
+time for each function. Modify the print statements to report the elapsed times.
+* Is parallelizing worth it if we have to mark the `sum` line as critical? Add your response here.
+
+Reduction offers us an alternative structure. If we ask OpenMP to use
+reduction in computing `sum`, it will automatically give each thread a local
+copy of the `sum` variable, solving the race condition, and it will have
+the leader thread combine the other threads' results using the operation
+we give it.
+
+* Add to the `parallel for` pragma a reduction modifier: `reduction(+:sum)`
+    - This says to use reduction in the calculation of `sum`, so that each thread has its own local copy of `sum`
+    - The `+` says for the leader thread to combine the other partial results using +
+    - Be sure to remove the `critical` pragma, as we no longer need it
+* What happens? Is parallelizing worth it now? Try running on larger values of `SIZE`.
 
 ## References
 

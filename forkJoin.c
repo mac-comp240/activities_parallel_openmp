@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     printf("\nBefore...\n\n");
 
-    //#pragma omp parallel
+    // #pragma omp parallel
     { 
     printf("\nDuring...\n");
     }

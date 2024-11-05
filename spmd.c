@@ -13,16 +13,14 @@
 
 int main() {
     int id, numThreads;
-    int shared_var;
     printf("\n");
 
-    #pragma omp parallel num_threads(4) shared(shared_var) private(id, numThreads)
+    #pragma omp parallel
     {
-        id = omp_get_thread_num();
-        shared_var = id;
-        numThreads = omp_get_num_threads();
-        printf("Hello from thread %d of %d, with shared_var=%d\n", id, numThreads, shared_var);
-        printf("Another shared_var: %d\n", shared_var);
+        int id = omp_get_thread_num();
+        int numThreads = omp_get_num_threads();
+
+        printf("Hello from thread %d of %d\n", id, numThreads);
     }
 
     printf("\n");

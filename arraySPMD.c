@@ -1,9 +1,8 @@
-/* spmdArray.c
- * ... illustrates SPMD
+/* arraySPMD.c
+ * ... illustrates SPMD operating on an array
  *
- * Taken from example in PDCBeginners on Runestone
- *
- * Usage: ./spmd
+ * Author: Susan Fox (Based on examples from PCB and other assignments)
+ * Usage: ./arraySPMD
  *
  */
 
