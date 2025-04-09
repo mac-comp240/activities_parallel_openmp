@@ -11,7 +11,7 @@
 #include <omp.h>
 #include <stdlib.h>
 
-#define SIZE 2000
+#define SIZE 1000
 
 int main(int argc, char** argv) {
     int i, j, ok = 1;
