@@ -183,7 +183,7 @@ work correctly.
 * Fix the problem by declaring the necessary variables as private using the appropriate pragma modifier.
 
 
-### Task 3: Parallel loop variations
+### Task 4: Parallel loop variations
 
 Here we will look at ways to control how iterations of a loop are broken up and
 allocated to threads.
@@ -212,7 +212,7 @@ greedy manner: whenever a thread is ready for another chunk, it is given it.
 
 * Experiment as we did with static scheduling. Record your observations here.
 
-### Task 4: Leader-worker pattern
+### Task 5: Leader-worker pattern
 
 * Examine the `leaderWorker.c` program. This shows how a single program can produce different
 behavior from different threads. 
@@ -224,7 +224,7 @@ behavior from different threads.
 * Run the program again, and see what the threads do!
 
 
-### Task 5: Reduction pattern
+### Task 6: Reduction pattern
 
 * Read through all of the `reduction.c` program, carefully. This builds an array of 
 random values, and then adds the values serially and in parallel. 
